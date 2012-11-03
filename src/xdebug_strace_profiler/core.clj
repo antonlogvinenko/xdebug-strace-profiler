@@ -19,19 +19,26 @@
 (defn split-trace [trace]
   (-> trace (.replaceAll " +" " ") .trim (.split " ") seq))
 
-(defn parse-trace [trace]
+(defn parse-trace [index trace]
   (let [trace-split (split-trace trace)]
-    [(get-trace-time trace-split)
-     (get-trace-call trace-split)
-     (get-trace-level trace)
-     (get-trace-position trace-split)]))
+    {:time (get-trace-time trace-split)
+     :call (get-trace-call trace-split)
+     :level (get-trace-level trace)
+     :position (get-trace-position trace-split)
+     :index index}))
 
-(defn parse-traces [traces] (map parse-trace traces))
+(defn parse-traces [traces] (map-indexed parse-trace traces))
+
 
   
-(defn build-profile [traces] traces)
+(defn build-profile [traces]
+  (group-by :level traces))
+
+
 
 (defn xml-profile [profile] profile)
+
+
 
 (defn -main [file-path]
   (-> file-path get-traces parse-traces build-profile xml-profile println))
