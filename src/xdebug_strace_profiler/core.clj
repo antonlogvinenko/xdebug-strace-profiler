@@ -27,12 +27,8 @@
      :position (get-trace-position trace-split)
      :index index}))
 
-(defn parse-traces [traces] (map-indexed parse-trace traces))
-
-
-  
-(defn build-profile [traces]
-  (group-by :level traces))
+(defn create-profile [traces]
+  (->> traces (map-indexed parse-trace) (group-by :level)))
 
 
 
@@ -41,7 +37,7 @@
 
 
 (defn -main [file-path]
-  (-> file-path get-traces parse-traces build-profile xml-profile println))
+  (-> file-path get-traces create-profile xml-profile println))
 
 
 
