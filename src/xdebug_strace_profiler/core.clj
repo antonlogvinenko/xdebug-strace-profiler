@@ -85,9 +85,8 @@
 
 (defn xml-profile [profile]
   (let [profile-levels (group-by :level profile)
-        min-level (->> profile-levels keys (apply min))
-        render-level (get profile-levels min-level)
-        rendered-level (map (render-node profile-levels) render-level)]
+        rendered-level (->> profile-levels keys (apply min) (get profile-levels)
+                            (map (render-node profile-levels)))]
     (put-to-document rendered-level)))
 
 
