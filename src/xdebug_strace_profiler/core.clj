@@ -1,6 +1,8 @@
 (ns xdebug-strace-profiler.core
-  (:use [clojure.java.io :only (file reader)])
-  (:use [clojure.core :only (read-line)])
+  (:use [clojure.java.io :only (file reader)]
+        [clojure.core :only (read-line)]
+        [clojure.contrib.prxml :only (prxml)]
+        [clojure.contrib.duck-streams :only (with-out-writer)])
   (:import [java.io File]))
 
 
@@ -59,8 +61,12 @@
 
 (defn render-node-with-children [node children]
   (assoc node :children children)
-  ;;todo
-  )
+  [:function
+   {:call (node :call)
+    :time-spent (node :time-spent)
+    
+    }
+   children])
 
 (defn render-node [profile]
   (fn [node]
@@ -73,8 +79,7 @@
       (render-node-with-children node rendered-children))))
 
 (defn put-to-document [top-level]
-  ;;todo
-  top-level)
+  [:profile top-level])
 
 (defn xml-profile [profile]
   (let [profile-levels (group-by :level profile)
@@ -111,6 +116,12 @@
     (do (spit file "")
         (print-tree file x))))
 
+(defn to-xml [profile]
+  (let [wr (java.io.StringWriter.)]
+    (-> wr
+        (with-out-writer (prxml profile) wr)
+        .toString)))
 
 (defn -main [file-path]
-  (-> file-path get-traces parse-traces calculate-time xml-profile dump))
+  (->> file-path get-traces parse-traces calculate-time xml-profile to-xml (spit "cake.xml")))
+
