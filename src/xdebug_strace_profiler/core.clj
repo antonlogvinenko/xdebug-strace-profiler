@@ -61,7 +61,6 @@
        profile
        (filter (fn [x] (let [l (:index x)] (and (< l end) (> l start)))))))
 
-
 (defn render-node-with-children [node children]
   (let [f (DecimalFormat. "#.####")]
     (assoc node :children children)
@@ -92,38 +91,14 @@
     (put-to-document rendered-level)))
 
 
-(defn get-spaces [n]
-  (if (zero? n) "" (->> n dec get-spaces (str " "))))
-
-(defn make-spaces [n]
-  (-> n (- 33) (* 2) get-spaces))
-
-
-
-
-
-(defn print-tree [file tree]
-  (doseq [row tree]
-    (let [representation (str
-                          (-> :level row make-spaces)
-                          (row :time-spent)
-                          " "
-                          (row :call)
-                          "\n")]
-      (do
-        (spit file representation :append true)
-        (print-tree file (row :children))))))
-
-(defn dump [x]
-  (let [file "cake.txt"]
-    (do (spit file "")
-        (print-tree file x))))
 
 (defn to-xml [profile]
   (let [wr (java.io.StringWriter.)]
     (-> wr
         (with-out-writer (prxml profile) wr)
         .toString)))
+
+
 
 (defn -main [file-path]
   (->> file-path get-traces parse-traces calculate-time xml-profile to-xml (spit "cake.xml")))
