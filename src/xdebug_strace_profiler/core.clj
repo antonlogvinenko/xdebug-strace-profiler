@@ -93,12 +93,9 @@
 
 (defn to-xml [profile]
   (let [wr (java.io.StringWriter.)]
-    (-> wr
-        (with-out-writer (prxml profile) wr)
-        .toString)))
+    (-> wr (with-out-writer (prxml profile) wr) .toString)))
 
 
 
 (defn -main [file-path]
   (->> file-path get-traces parse-traces calculate-time xml-profile to-xml (spit "cake.xml")))
-
