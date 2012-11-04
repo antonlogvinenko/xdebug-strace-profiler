@@ -61,10 +61,10 @@
 
 (defn render-node-with-children [node children]
   (assoc node :children children)
-  [:function
-   {:call (node :call)
-    :time-spent (node :time-spent)
-    :location (node :position)}
+  [:call
+   {:name (node :call)
+    :time (node :time-spent)
+    :where (node :position)}
    children])
 
 (defn render-node [profile]
