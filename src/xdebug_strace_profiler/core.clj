@@ -31,32 +31,54 @@
   (map-indexed parse-trace traces))
 
 
+
 (defn time-search [profile]
   (fn [index element]
     (let [my-level (:level element)
+          my-index (:index element)
           start-time (:time-start element)
           filtered (->> profile
                         (drop (inc index))
                         (filter #(-> % :level (<= my-level)))
                         (take 1))
-          time-new (-> filtered (nth 0 {:time-start start-time}) :time-start)]
-    (assoc element :time-spent (- time-new start-time)))))
-
-
+          real-filtered (nth filtered 0 {:time-start start-time :index my-index})
+          time-new (real-filtered :time-start)
+          next-index (real-filtered :index)]
+    (assoc element :time-spent (- time-new start-time) :next-index next-index))))
 
 (defn calculate-time [profile]
   (map-indexed (time-search profile) profile))
 
-(defn xml-profile [a] a)
+
+
+(defn family-reunion [parent children]
+  )
+
+(defn create-xml-node-from-entry [entry]
+  )
+
+(defn render-xml-for-level [profile]
+  )
+
+(defn xml-profile [profile]
+  (let [profile-levels (group-by :level profile)
+        max-level (->> profile-levels keys (apply min))]
+    
+    profile))
 
 
 (defn dump [x]
+  (let [file "cake.txt"]
+    (do
+      (spit file "")
+      (doseq [e x]
+        (spit file e :append true)
+        (spit file "\n\n" :append true)))))
 
-  (doseq [e (filter #(-> % :level (<= 33)) x)] (println e))
-(println (count x)))
-
+  
 (defn -main [file-path]
   (-> file-path get-traces parse-traces calculate-time xml-profile dump))
+
 
 
 
