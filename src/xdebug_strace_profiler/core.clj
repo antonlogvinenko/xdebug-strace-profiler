@@ -2,8 +2,10 @@
   (:use [clojure.java.io :only (file reader)]
         [clojure.core :only (read-line)]
         [clojure.contrib.prxml :only (prxml)]
-        [clojure.contrib.duck-streams :only (with-out-writer)])
-  (:import [java.io File]))
+        [clojure.contrib.duck-streams :only (with-out-writer)]
+        [clojure.contrib.math :only (round)])
+  (:import [java.io File]
+           [java.text DecimalFormat]))
 
 
 (defn get-traces [file-path]
@@ -59,13 +61,15 @@
        profile
        (filter (fn [x] (let [l (:index x)] (and (< l end) (> l start)))))))
 
+
 (defn render-node-with-children [node children]
-  (assoc node :children children)
-  [:call
-   {:name (node :call)
-    :time (node :time-spent)
-    :where (node :position)}
-   children])
+  (let [f (DecimalFormat. "#.####")]
+    (assoc node :children children)
+    [:call
+     {:name (node :call)
+      :time (->> :time-spent node (.format f))
+      :where (node :position)}
+     children]))
 
 (defn render-node [profile]
   (fn [node]
