@@ -12,7 +12,7 @@ The most common profiling pattern is taking a measurement and digging into the m
 
 TODO
 * A handful of tests would be nice
-* Refactoring of those passionate s-expressions would be nice, too
+* Refactoring those passionate s-expressions would be nice, too
 * Abstract from XML; any output format, quite easy to implement
 * Percentage of how much parent call time do subcalls take?
 * Option to show only the most time consuming path of calls
