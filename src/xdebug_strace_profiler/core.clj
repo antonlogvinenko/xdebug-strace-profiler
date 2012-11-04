@@ -64,8 +64,7 @@
   [:function
    {:call (node :call)
     :time-spent (node :time-spent)
-    
-    }
+    :location (node :position)}
    children])
 
 (defn render-node [profile]
