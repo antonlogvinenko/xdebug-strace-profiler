@@ -15,4 +15,4 @@ TODO
 * Refactoring those passionate s-expressions would be nice, too
 * Abstract from XML; any output format, quite easy to implement
 * Percentage of how much parent call time do subcalls take?
-* Option to show only the most time consuming path of calls
+* Add an option to show only most time consuming path of calls
