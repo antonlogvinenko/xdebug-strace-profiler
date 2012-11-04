@@ -2,8 +2,7 @@
   (:use [clojure.java.io :only (file reader)]
         [clojure.core :only (read-line)]
         [clojure.contrib.prxml :only (prxml)]
-        [clojure.contrib.duck-streams :only (with-out-writer)]
-        [clojure.contrib.math :only (round)])
+        [clojure.contrib.duck-streams :only (with-out-writer)])
   (:import [java.io File]
            [java.text DecimalFormat]))
 
