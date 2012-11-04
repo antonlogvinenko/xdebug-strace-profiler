@@ -25,7 +25,8 @@
      :call (get-trace-call trace-split)
      :level (get-trace-level trace)
      :position (get-trace-position trace-split)
-     :index index}))
+     :index index
+     :children []}))
 
 (defn parse-traces [traces]
   (map-indexed parse-trace traces))
@@ -54,7 +55,7 @@
 (defn find-nodes [profile level start end]
   (->> level
        profile
-       (filter (fn [x] (let [l (:level x)] (and (< l end) (> l start)))))))
+       (filter (fn [x] (let [l (:index x)] (and (< l end) (> l start)))))))
 
 (defn render-node-with-children [node children]
   (assoc node :children children)
@@ -69,7 +70,7 @@
           end-index (node :next-index)
           children (find-nodes profile children-level start-index end-index)
           rendered-children (map (render-node profile) children)]
-      (render-node-with-children node children))))
+      (render-node-with-children node rendered-children))))
 
 (defn put-to-document [top-level]
   ;;todo
@@ -83,18 +84,33 @@
     (put-to-document rendered-level)))
 
 
+(defn get-spaces [n]
+  (if (zero? n) "" (->> n dec get-spaces (str " "))))
+
+(defn make-spaces [n]
+  (-> n (- 33) (* 2) get-spaces))
+
+
+
+
+
+(defn print-tree [file tree]
+  (doseq [row tree]
+    (let [representation (str
+                          (-> :level row make-spaces)
+                          (row :time-spent)
+                          " "
+                          (row :call)
+                          "\n")]
+      (do
+        (spit file representation :append true)
+        (print-tree file (row :children))))))
+
 (defn dump [x]
   (let [file "cake.txt"]
-    (do
-      (spit file "")
-      (doseq [e x]
-        (spit file e :append true)
-        (spit file "\n\n" :append true)))))
+    (do (spit file "")
+        (print-tree file x))))
 
-  
+
 (defn -main [file-path]
   (-> file-path get-traces parse-traces calculate-time xml-profile dump))
-
-
-
-
