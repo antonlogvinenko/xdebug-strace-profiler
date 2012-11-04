@@ -5,7 +5,7 @@
 
 
 (defn get-traces [file-path]
-  (->> file-path file reader line-seq (drop 1) (drop-last 2)))
+  (->> file-path file reader line-seq (drop 1) (drop-last 3)))
 
 
 (defn get-trace-position [trace] (nth trace 4 "xdebug_stop_trace()"))
@@ -51,20 +51,36 @@
 
 
 
-(defn family-reunion [parent children]
+(defn find-nodes [profile level start end]
+  (->> level
+       profile
+       (filter (fn [x] (let [l (:level x)] (and (< l end) (> l start)))))))
+
+(defn render-node-with-children [node children]
+  (assoc node :children children)
+  ;;todo
   )
 
-(defn create-xml-node-from-entry [entry]
-  )
+(defn render-node [profile]
+  (fn [node]
+    (let [level (node :level)
+          children-level (+ level 2)
+          start-index (node :index)
+          end-index (node :next-index)
+          children (find-nodes profile children-level start-index end-index)
+          rendered-children (map (render-node profile) children)]
+      (render-node-with-children node children))))
 
-(defn render-xml-for-level [profile]
-  )
+(defn put-to-document [top-level]
+  ;;todo
+  top-level)
 
 (defn xml-profile [profile]
   (let [profile-levels (group-by :level profile)
-        max-level (->> profile-levels keys (apply min))]
-    
-    profile))
+        min-level (->> profile-levels keys (apply min))
+        render-level (get profile-levels min-level)
+        rendered-level (map (render-node profile-levels) render-level)]
+    (put-to-document rendered-level)))
 
 
 (defn dump [x]
