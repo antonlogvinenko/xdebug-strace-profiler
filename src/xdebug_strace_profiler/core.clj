@@ -78,14 +78,12 @@
           rendered-children (map (render-node profile) children)]
       (render-node-with-children node rendered-children))))
 
-(defn put-to-document [top-level]
-  [:profile top-level])
+(defn put-to-document [top-level] [:profile top-level])
 
 (defn xml-profile [profile]
-  (let [profile-levels (group-by :level profile)
-        rendered-level (->> profile-levels keys (apply min) (get profile-levels)
-                            (map (render-node profile-levels)))]
-    (put-to-document rendered-level)))
+  (let [profile-levels (group-by :level profile)]
+    (:profile (->> profile-levels keys (apply min) (get profile-levels)
+                   (map (render-node profile-levels))))))
 
 
 
