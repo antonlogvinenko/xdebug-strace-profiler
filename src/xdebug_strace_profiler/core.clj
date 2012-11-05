@@ -62,7 +62,6 @@
 
 (defn render-node-with-children [node children]
   (let [f (DecimalFormat. "#.####")]
-    (assoc node :children children)
     [:call
      {:name (node :call)
       :time (->> :time-spent node (.format f))
